@@ -2,10 +2,10 @@ import type { Post } from '../types/post';
 
 type Props = {
 	post: Post;
-	onLike?: () => void;
-	onDelete?: () => void;
-	isLiked?: boolean;
-	showDelete?: boolean;
+	onLike?: (() => void) | undefined;
+	onDelete?: (() => void) | undefined;
+	isLiked?: boolean | undefined;
+	showDelete?: boolean | undefined;
 };
 
 export const PostCard = ({
