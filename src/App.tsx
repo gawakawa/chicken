@@ -6,14 +6,12 @@ import { PostForm } from './components/PostForm';
 import { PostList } from './components/PostList';
 import { SortToggle } from './components/SortToggle';
 import { createPost } from './lib/posts';
-import { toggleLike } from './lib/likes';
 import type { SortOption } from './types/post';
 
 const Board = () => {
-	const { user, loading } = useAuth();
+	const { loading } = useAuth();
 	const [sortBy, setSortBy] = useState<SortOption>('createdAt');
 	const posts = usePosts(sortBy);
-	const [likedPostIds] = useState(new Set<string>());
 
 	if (loading) {
 		return (
@@ -25,12 +23,6 @@ const Board = () => {
 
 	const handleSubmit = async (content: string) => {
 		await createPost(content);
-	};
-
-	const handleLike = async (postId: string) => {
-		if (!user) return;
-		const isLiked = likedPostIds.has(postId);
-		await toggleLike(postId, user.uid, isLiked);
 	};
 
 	return (
@@ -49,7 +41,7 @@ const Board = () => {
 					<h2 className="text-xl font-semibold text-gray-800">Posts</h2>
 					<SortToggle sortBy={sortBy} onSortChange={setSortBy} />
 				</div>
-				<PostList posts={posts} likedPostIds={likedPostIds} onLike={handleLike} />
+				<PostList posts={posts} />
 			</section>
 		</div>
 	);
