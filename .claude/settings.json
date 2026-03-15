@@ -1,0 +1,20 @@
+{
+	"permissions": {
+		"ask": [
+			"Edit(./package.json)"
+		]
+	},
+	"hooks": {
+		"PostToolUse": [
+			{
+				"matcher": "Edit|MultiEdit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "cd ${CLAUDE_PROJECT_DIR} && nix flake check && pnpm lint"
+					}
+				]
+			}
+		]
+	}
+}
