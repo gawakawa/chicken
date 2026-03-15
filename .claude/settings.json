@@ -1,7 +1,8 @@
 {
 	"permissions": {
 		"ask": [
-			"Edit(./package.json)"
+			"Edit(./package.json)",
+			"Edit(./.oxlintrc.json)"
 		]
 	},
 	"hooks": {

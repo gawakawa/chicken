@@ -2,11 +2,18 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { usePosts } from '../../src/hooks/usePosts';
 import * as postsModule from '../../src/lib/posts';
-import type { Timestamp } from 'firebase/firestore';
 import type { SortOption } from '../../src/types/post';
 
 vi.mock('../../src/lib/posts', () => {
 	const mockUnsubscribe = vi.fn();
+	const mockTimestamp = {
+		seconds: 0,
+		nanoseconds: 0,
+		toDate: () => new Date(0),
+		toMillis: () => 0,
+		isEqual: () => true,
+		valueOf: () => '',
+	};
 	return {
 		subscribeToPostsSnapshot: vi.fn((callback) => {
 			const mockPosts = [
@@ -14,13 +21,13 @@ vi.mock('../../src/lib/posts', () => {
 					id: '1',
 					content: 'First post',
 					likeCount: 5,
-					createdAt: {} as Timestamp,
+					createdAt: mockTimestamp,
 				},
 				{
 					id: '2',
 					content: 'Second post',
 					likeCount: 3,
-					createdAt: {} as Timestamp,
+					createdAt: mockTimestamp,
 				},
 			];
 			setTimeout(() => callback(mockPosts), 10);
@@ -49,9 +56,10 @@ describe('usePosts', () => {
 	});
 
 	it('should resubscribe when sortBy changes', () => {
-		const { rerender } = renderHook(({ sortBy }: { sortBy: SortOption }) => usePosts(sortBy), {
-			initialProps: { sortBy: 'createdAt' as SortOption },
-		});
+		const { rerender } = renderHook<unknown, { sortBy: SortOption }>(
+			({ sortBy }) => usePosts(sortBy),
+			{ initialProps: { sortBy: 'createdAt' } },
+		);
 
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenCalledTimes(1);
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenLastCalledWith(
@@ -59,7 +67,7 @@ describe('usePosts', () => {
 			'createdAt',
 		);
 
-		rerender({ sortBy: 'likeCount' as SortOption });
+		rerender({ sortBy: 'likeCount' });
 
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenCalledTimes(2);
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenLastCalledWith(

@@ -5,8 +5,8 @@ import { auth } from '../lib/firebase';
 import { AuthContext } from './createAuthContext';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-	const [state, setState] = useState({
-		user: undefined as User | undefined,
+	const [state, setState] = useState<{ user: User | undefined; loading: boolean }>({
+		user: undefined,
 		loading: true,
 	});
 

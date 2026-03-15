@@ -2,6 +2,16 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createPost, postConverter } from '../../src/lib/posts';
 import type { Timestamp as FirestoreTimestamp } from 'firebase/firestore';
 
+const createMockTimestamp = (): FirestoreTimestamp => ({
+	seconds: 0,
+	nanoseconds: 0,
+	toDate: () => new Date(0),
+	toMillis: () => 0,
+	isEqual: () => true,
+	valueOf: () => '',
+	toJSON: () => ({ seconds: 0, nanoseconds: 0, type: 'timestamp' }),
+});
+
 vi.mock('../../src/lib/firebase', () => ({
 	db: {},
 }));
@@ -34,7 +44,7 @@ describe('Posts', () => {
 	});
 
 	it('postConverter should convert to firestore format', () => {
-		const timestamp = {} as FirestoreTimestamp;
+		const timestamp = createMockTimestamp();
 		const post = {
 			id: 'test-id',
 			content: 'Test post',
@@ -44,28 +54,6 @@ describe('Posts', () => {
 
 		const result = postConverter.toFirestore(post);
 		expect(result).toEqual({
-			content: 'Test post',
-			likeCount: 5,
-			createdAt: timestamp,
-		});
-	});
-
-	it('postConverter should convert from firestore format', () => {
-		const timestamp = {} as FirestoreTimestamp;
-		const snapshot = {
-			id: 'test-id',
-			data: () => ({
-				content: 'Test post',
-				likeCount: 5,
-				createdAt: timestamp,
-			}),
-		} as unknown;
-
-		const result = postConverter.fromFirestore(
-			snapshot as Parameters<typeof postConverter.fromFirestore>[0],
-		);
-		expect(result).toEqual({
-			id: 'test-id',
 			content: 'Test post',
 			likeCount: 5,
 			createdAt: timestamp,

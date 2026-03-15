@@ -92,6 +92,8 @@
 				"@typescript-eslint/prefer-as-const": "error",
 				"@typescript-eslint/prefer-namespace-keyword": "error",
 				"@typescript-eslint/triple-slash-reference": "error",
+				"@typescript-eslint/consistent-type-definitions": ["error", "type"],
+				"@typescript-eslint/no-non-null-assertion": "error",
 				"react-hooks/rules-of-hooks": "error",
 				"react-hooks/exhaustive-deps": "warn",
 				"react/only-export-components": [
@@ -99,7 +101,16 @@
 					{
 						"allowConstantExport": true
 					}
-				]
+				],
+				"eqeqeq": "error",
+				"unicorn/no-null": "error",
+				"@typescript-eslint/consistent-type-assertions": [
+					"error",
+					{ "assertionStyle": "never" }
+				],
+				"func-style": ["error", "expression"],
+				"prefer-arrow-callback": "error",
+				"prefer-const": "error"
 			},
 			"plugins": ["typescript", "react"],
 			"env": {
