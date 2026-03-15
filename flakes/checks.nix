@@ -13,32 +13,49 @@ _: {
         fetcherVersion = 3;
         hash = "sha256-wiWdY/nYqLwFrhmr+WiAS08ilcrjUbL3Qvi+dvK0FMw=";
       };
+
+      mkCheck =
+        {
+          name,
+          command,
+          extraNativeBuildInputs ? [ ],
+        }:
+        pkgs.stdenvNoCC.mkDerivation {
+          inherit name src pnpmDeps;
+
+          nativeBuildInputs = [
+            nodejs
+            pkgs.pnpmConfigHook
+            pnpm
+          ]
+          ++ extraNativeBuildInputs;
+
+          dontBuild = true;
+
+          doCheck = true;
+          checkPhase = ''
+            runHook preCheck
+            ${command}
+            runHook postCheck
+          '';
+
+          installPhase = ''
+            runHook preInstall
+            touch $out
+            runHook postInstall
+          '';
+        };
     in
     {
-      checks.tests = pkgs.stdenvNoCC.mkDerivation {
+      checks.tests = mkCheck {
         name = "tests";
-        inherit src pnpmDeps;
+        command = "pnpm test";
+      };
 
-        nativeBuildInputs = [
-          nodejs
-          pkgs.pnpmConfigHook
-          pnpm
-        ];
-
-        dontBuild = true;
-
-        doCheck = true;
-        checkPhase = ''
-          runHook preCheck
-          pnpm test
-          runHook postCheck
-        '';
-
-        installPhase = ''
-          runHook preInstall
-          touch $out
-          runHook postInstall
-        '';
+      checks.lint = mkCheck {
+        name = "lint";
+        command = "oxlint --type-aware --type-check";
+        extraNativeBuildInputs = [ pkgs.oxlint ];
       };
     };
 }

@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
-		"lint": "oxlint --type-aware",
+		"lint": "oxlint --type-aware --type-check",
 		"preview": "vite preview",
 		"test": "vitest run"
 	},
