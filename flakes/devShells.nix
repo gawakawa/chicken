@@ -6,6 +6,7 @@ _: {
         config.ciPackages
         ++ config.pre-commit.settings.enabledPackages
         ++ (with pkgs; [
+          google-cloud-sdk
           firebase-tools
         ]);
     in
