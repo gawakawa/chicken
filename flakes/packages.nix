@@ -17,6 +17,7 @@
       ciPackages = with pkgs; [
         pnpm
         nodejs_24
+        playwright-test
       ];
 
       packages.ci = pkgs.buildEnv {
