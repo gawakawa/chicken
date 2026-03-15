@@ -62,4 +62,59 @@ test.describe('Sort Functionality', () => {
 			}
 		}
 	});
+
+	test('should sort posts by like count when Popular is selected', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.getByText('Loading')).not.toBeVisible({ timeout: 10000 });
+
+		const textarea = page.locator('textarea');
+
+		// Create 2 posts with unique content
+		const uniqueId = Date.now();
+		const postAContent = `Sort Post A ${uniqueId}`;
+		const postBContent = `Sort Post B ${uniqueId}`;
+
+		await textarea.fill(postAContent);
+		await page.getByRole('button', { name: 'Post' }).click();
+		const postA = page.locator('article').filter({ hasText: postAContent });
+		await expect(postA).toBeVisible();
+
+		await textarea.fill(postBContent);
+		await page.getByRole('button', { name: 'Post' }).click();
+		const postB = page.locator('article').filter({ hasText: postBContent });
+		await expect(postB).toBeVisible();
+
+		// Like Post A (will have 1 like, Post B has 0 likes)
+		await postA.locator('button').filter({ hasText: '♡' }).click();
+		await expect(postA.locator('button').filter({ hasText: '♥' })).toBeVisible();
+
+		// In Latest sort (default), Post B should be above Post A (newer first)
+		const allArticles = page.locator('article');
+		const postAIndex = await getArticleIndex(allArticles, postAContent);
+		const postBIndexLatest = await getArticleIndex(allArticles, postBContent);
+		expect(postBIndexLatest).toBeLessThan(postAIndex);
+
+		// Click Popular sort
+		await page.getByRole('button', { name: 'Popular' }).click();
+		await page.waitForTimeout(500);
+
+		// In Popular sort, Post A (1 like) should be above Post B (0 likes)
+		const postAIndexPopular = await getArticleIndex(allArticles, postAContent);
+		const postBIndexPopular = await getArticleIndex(allArticles, postBContent);
+		expect(postAIndexPopular).toBeLessThan(postBIndexPopular);
+	});
 });
+
+const getArticleIndex = async (
+	articles: import('@playwright/test').Locator,
+	content: string,
+): Promise<number> => {
+	const count = await articles.count();
+	for (let i = 0; i < count; i++) {
+		const text = await articles.nth(i).textContent();
+		if (text?.includes(content)) {
+			return i;
+		}
+	}
+	return -1;
+};

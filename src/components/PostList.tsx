@@ -4,7 +4,7 @@ import { useLiked } from '../hooks/useLiked';
 
 type PostCardWithLikeProps = {
 	post: Post;
-	onDelete?: () => void;
+	onDelete?: (() => void) | undefined;
 	showDelete: boolean;
 };
 

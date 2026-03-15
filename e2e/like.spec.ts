@@ -73,4 +73,37 @@ test.describe('Like Functionality', () => {
 		// Verify like state persisted
 		await expect(page.locator('button').filter({ hasText: '♥' }).first()).toBeVisible();
 	});
+
+	test('should not add multiple likes when clicking rapidly', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.getByText('Loading')).not.toBeVisible({ timeout: 10000 });
+
+		// Create a post with unique content
+		const uniqueContent = `Spam click test ${Date.now()}`;
+		const textarea = page.locator('textarea');
+		await textarea.fill(uniqueContent);
+		await page.getByRole('button', { name: 'Post' }).click();
+
+		// Wait for post to appear
+		const post = page.locator('article').filter({ hasText: uniqueContent });
+		await expect(post).toBeVisible();
+
+		// Get the like button for this specific post
+		const likeButton = post.locator('button').filter({ hasText: '♡' });
+		await expect(likeButton).toBeVisible();
+
+		// Click rapidly multiple times using Promise.all for concurrent clicks
+		const clicks = [];
+		for (let i = 0; i < 5; i++) {
+			clicks.push(likeButton.click({ force: true }));
+		}
+		await Promise.all(clicks);
+
+		// Wait for all requests to settle
+		await page.waitForTimeout(2000);
+
+		// Verify like count is exactly 1 (Firestore document structure prevents duplicates)
+		const likeButtonAfter = post.locator('button').filter({ hasText: '♥' });
+		await expect(likeButtonAfter).toContainText('1');
+	});
 });
