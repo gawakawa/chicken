@@ -1,7 +1,7 @@
 import {
 	collection,
 	addDoc,
-	Timestamp,
+	serverTimestamp,
 	onSnapshot,
 	query,
 	orderBy,
@@ -39,7 +39,7 @@ export const createPost = async (content: string): Promise<string> => {
 		id: '',
 		content,
 		likeCount: 0,
-		createdAt: Timestamp.now(),
+		createdAt: serverTimestamp(),
 	} as Post);
 
 	return docRef.id;
