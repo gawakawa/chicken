@@ -55,7 +55,7 @@ export const subscribeToPostsSnapshot = (
 	) as Query<Post>;
 
 	return onSnapshot(q, (snapshot) => {
-		const posts = snapshot.docs.map((doc) => doc.data());
+		const posts = snapshot.docs.map((doc) => doc.data()).filter((post) => post.createdAt !== null);
 		callback(posts);
 	});
 };

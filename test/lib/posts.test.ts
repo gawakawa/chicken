@@ -11,6 +11,7 @@ vi.mock('firebase/firestore', () => {
 	return {
 		collection: vi.fn(() => ({ withConverter: vi.fn(() => ({})) })),
 		addDoc: vi.fn(() => Promise.resolve(mockDocRef)),
+		serverTimestamp: vi.fn(() => ({ _serverTimestamp: true })),
 		Timestamp: {
 			now: () => new Date().getTime(),
 		},

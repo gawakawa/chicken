@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { usePosts } from '../../src/hooks/usePosts';
 import * as postsModule from '../../src/lib/posts';
 import type { Timestamp } from 'firebase/firestore';
+import type { SortOption } from '../../src/types/post';
 
 vi.mock('../../src/lib/posts', () => {
 	const mockUnsubscribe = vi.fn();
@@ -48,8 +49,8 @@ describe('usePosts', () => {
 	});
 
 	it('should resubscribe when sortBy changes', () => {
-		const { rerender } = renderHook(({ sortBy }) => usePosts(sortBy), {
-			initialProps: { sortBy: 'createdAt' as const },
+		const { rerender } = renderHook(({ sortBy }: { sortBy: SortOption }) => usePosts(sortBy), {
+			initialProps: { sortBy: 'createdAt' as SortOption },
 		});
 
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenCalledTimes(1);
@@ -58,7 +59,7 @@ describe('usePosts', () => {
 			'createdAt',
 		);
 
-		rerender({ sortBy: 'likeCount' as const });
+		rerender({ sortBy: 'likeCount' as SortOption });
 
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenCalledTimes(2);
 		expect(postsModule.subscribeToPostsSnapshot).toHaveBeenLastCalledWith(
