@@ -10,7 +10,7 @@ _: {
         oxlint = {
           enable = true;
           name = "oxlint";
-          entry = "${pkgs.oxlint}/bin/oxlint --type-aware";
+          entry = "${pkgs.oxlint}/bin/oxlint";
           files = "\\.(ts|tsx|js|jsx)$";
           pass_filenames = false;
         };
