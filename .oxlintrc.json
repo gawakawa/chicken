@@ -109,7 +109,6 @@
 					{ "assertionStyle": "never" }
 				],
 				"func-style": ["error", "expression"],
-				"prefer-arrow-callback": "error",
 				"prefer-const": "error"
 			},
 			"plugins": ["typescript", "react"],
